@@ -264,7 +264,10 @@ export function handlerResultDisplay(
 	// vscode.window.showInformationMessage(translatedResult);
 	
 	// default pop up prompt in the bottom right corner click event for viewing messages
-	vscode.window.showInformationMessage(translatedResult, "More").then(selection => {
+	vscode.window.showInformationMessage(translatedResult, "Copy", "More").then(selection => {
+		if (selection === "Copy") {
+			vscode.env.clipboard.writeText(translatedResult);
+		}
 		if (selection === "More") {
 			// display in webview mode
 			const panel = vscode.window.createWebviewPanel(
@@ -290,32 +293,32 @@ export function handlerResultDisplay(
 	}
 
 	// optional pop up options, allow users to directly replace selected text or append translations, this feature is only valid for selected text
-	if (editor && !enableReplace) {
-		const hasSelection = editor.selections.some(selection => !selection.isEmpty);
-		if (!hasSelection) {
-			return;
-		}
+	// if (editor && !enableReplace) {
+	// 	const hasSelection = editor.selections.some(selection => !selection.isEmpty);
+	// 	if (!hasSelection) {
+	// 		return;
+	// 	}
 
-		// allow users to directly replace selected text or append translations
-		let options = [
-			`Replace | 直接替换选中文本`,
-			`Append & Select | 将译文追加到选中文本末尾并选中译文`
-		];
-		vscode.window.showQuickPick(options).then(selection => {
-			if (!selection) {
-				return;
-			}
-			const selectionValue = selection.split(" | ")[0];
-			console.log(`you have chosen: ${text} => ${selectionValue}`);
+	// 	// allow users to directly replace selected text or append translations
+	// 	let options = [
+	// 		`Replace | 直接替换选中文本`,
+	// 		`Append & Select | 将译文追加到选中文本末尾并选中译文`
+	// 	];
+	// 	vscode.window.showQuickPick(options).then(selection => {
+	// 		if (!selection) {
+	// 			return;
+	// 		}
+	// 		const selectionValue = selection.split(" | ")[0];
+	// 		console.log(`you have chosen: ${text} => ${selectionValue}`);
 		
-			if ("Replace" === selectionValue) {
-				replaceEditorSelectedTextOnly(editor, translatedResult);
-			} else {
-				appendTranslationAndSelect(editor, text, translatedResult);
-			}
+	// 		if ("Replace" === selectionValue) {
+	// 			replaceEditorSelectedTextOnly(editor, translatedResult);
+	// 		} else {
+	// 			appendTranslationAndSelect(editor, text, translatedResult);
+	// 		}
 			
-		});
-	}
+	// 	});
+	// }
 
 }
 
